@@ -54,7 +54,7 @@
 
 <div id="gallery"></div>
 
-<script>
+
 
 
 <script>
@@ -187,13 +187,14 @@ fetch(url)
       players: r.c[5]?.v.split(';').map(p => p.trim())
     }));
 
-    populateFilters();
+   
     renderGallery();
   })
   .catch(err => console.error('Sheet load error', err))</script>
 
 </body>
 </html>
+
 
 
 
