@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Athletic History</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0b132b;
+      color: white;
+    }
+    header {
+      padding: 16px;
+      background: #1c2541;
+      display: flex;
+      gap: 12px;
+    }
+    input, select {
+      font-size: 18px;
+      padding: 8px;
+      border-radius: 6px;
+      border: none;
+    }
+    #gallery {
+      padding: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+    }
+    .card {
+      background: #3a506b;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+    .info {
+      padding: 8px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <input id="searchInput" placeholder="Search player name">
+  <select id="sportFilter"><option value="">All Sports</option></select>
+  <select id="yearFilter"><option value="">All Years</option></select>
+</header>
+
+<div id="gallery"></div>
+
+<script>
+let photos = [];
+
+const SHEET_ID = '1xI9Ytn8Z4bjYlIwpMbGmBfe-2rMFCNuywpXq584s1pg';
+const SHEET_NAME = 'Sheet1'; // change only if you renamed the sheet
+
+const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}`;
+
+fetch(url)
+  .then(res => res.text())
+  .then(text => {
+    const json = JSON.parse(text.substring(47).slice(0, -2));
+    const rows = json.table.rows;
+
+    photos = rows.map(r => ({
+      id: r.c[0]?.v,
+      sport: r.c[1]?.v,
+      year: r.c[2]?.v,
+      description: r.c[3]?.v,
+      image: r.c[4]?.v,
+      players: r.c[5]?.v.split(';').map(p => p.trim())
+    }));
+
+    populateFilters();
+    renderGallery();
+  })
+  .catch(err => console.error('Sheet load error', err))</script>
+
+</body>
+</html>
