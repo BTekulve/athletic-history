@@ -55,6 +55,116 @@
 <div id="gallery"></div>
 
 <script>
+
+
+<script>
+year: 1999,
+description: 'Varsity Team Photo',
+image: 'https://via.placeholder.com/800x500?text=Basketball+1999',
+players: ['John Smith', 'Mike Jones', 'Aaron Lee']
+},
+{
+id: 'P002',
+sport: 'Football',
+year: 2005,
+description: 'Homecoming Game',
+image: 'https://via.placeholder.com/800x500?text=Football+2005',
+players: ['Chris Adams', 'John Smith']
+}
+];
+
+
+let slideshowIndex = 0;
+let slideshowTimer;
+
+
+const gallery = document.getElementById('gallery');
+const sportFilter = document.getElementById('sportFilter');
+const yearFilter = document.getElementById('yearFilter');
+
+
+function populateFilters() {
+[...new Set(photos.map(p => p.sport))].forEach(s => {
+const opt = document.createElement('option');
+opt.value = s; opt.textContent = s;
+sportFilter.appendChild(opt);
+});
+[...new Set(photos.map(p => p.year))].sort().forEach(y => {
+const opt = document.createElement('option');
+opt.value = y; opt.textContent = y;
+yearFilter.appendChild(opt);
+});
+}
+
+
+function renderGallery() {
+gallery.innerHTML = '';
+const search = document.getElementById('searchInput').value.toLowerCase();
+const sport = sportFilter.value;
+const year = yearFilter.value;
+
+
+photos.filter(p => {
+return (!sport || p.sport === sport) &&
+(!year || p.year == year) &&
+(!search || p.players.some(pl => pl.toLowerCase().includes(search)));
+}).forEach(p => {
+const card = document.createElement('div');
+card.className = 'card';
+card.innerHTML = `
+<img src="${p.image}" />
+<div class="info">${p.sport} • ${p.year}</div>`;
+card.onclick = () => showDetail(p);
+gallery.appendChild(card);
+});
+}
+
+
+function showDetail(photo) {
+document.getElementById('detailTitle').textContent = `${photo.sport} • ${photo.year}`;
+document.getElementById('detailImage').src = photo.image;
+document.getElementById('detailPlayers').textContent = 'Players: ' + photo.players.join(', ');
+document.getElementById('detail').style.display = 'flex';
+}
+
+
+function closeDetail() {
+document.getElementById('detail').style.display = 'none';
+}
+
+
+function startSlideshow() {
+const slide = document.getElementById('slideImage');
+slide.src = photos[slideshowIndex].image;
+slideshowTimer = setInterval(() => {
+slideshowIndex = (slideshowIndex + 1) % photos.length;
+slide.src = photos[slideshowIndex].image;
+}, 4000);
+}
+
+
+function exitSlideshow() {
+document.getElementById('slideshow').style.display = 'none';
+clearInterval(slideshowTimer);
+}
+
+
+// Event listeners
+['searchInput','sportFilter','yearFilter'].forEach(id => {
+document.getElementById(id).addEventListener('input', renderGallery);
+});
+
+
+populateFilters();
+renderGallery();
+startSlideshow();
+
+
+
+
+
+
+  
 let photos = [];
 
 const SHEET_ID = '1xI9Ytn8Z4bjYlIwpMbGmBfe-2rMFCNuywpXq584s1pg';
@@ -84,5 +194,6 @@ fetch(url)
 
 </body>
 </html>
+
 
 
